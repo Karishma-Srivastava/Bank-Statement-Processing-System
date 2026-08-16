@@ -101,6 +101,50 @@ if uploaded_file is not None:
             )
 
             # --------------------------------
+            # Classification comparison
+            # --------------------------------
+
+            if (
+                "rule_based_category" in transactions.columns
+                and "ml_category" in transactions.columns
+            ):
+
+                st.subheader(
+                    "Classification Comparison"
+                )
+
+                comparison = transactions[
+                    [
+                        "description",
+                        "rule_based_category",
+                        "ml_category"
+                    ]
+                ].copy()
+
+                st.dataframe(
+                    comparison,
+                    use_container_width=True
+                )
+
+                matches = (
+                    comparison["rule_based_category"]
+                    == comparison["ml_category"]
+                ).sum()
+
+                total = len(comparison)
+
+                if total > 0:
+
+                    agreement = (
+                        matches / total
+                    ) * 100
+
+                    st.metric(
+                        "Rule-Based / ML Agreement",
+                        f"{agreement:.1f}%"
+                    )
+
+            # --------------------------------
             # Validation
             # --------------------------------
 

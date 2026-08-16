@@ -23,7 +23,8 @@ from src.coordinate_extractor import (
 
 
 from src.classifier import (
-    classify_transaction
+    classify_transaction,
+    classify_transaction_ml
 )
 
 
@@ -120,14 +121,25 @@ def process_statement(pdf_path):
         transactions
     )
 
-    # ---------------------------------------
+        # ---------------------------------------
     # 7. Classification
     # ---------------------------------------
 
-    transactions["category"] = (
+    transactions["rule_based_category"] = (
         transactions["description"]
         .apply(classify_transaction)
     )
+
+    transactions["ml_category"] = (
+        transactions["description"]
+        .apply(classify_transaction_ml)
+    )
+
+    # Primary category remains rule-based.
+    transactions["category"] = (
+        transactions["rule_based_category"]
+    )
+
     direction_errors = validate_transaction_direction(
         transactions
     )
